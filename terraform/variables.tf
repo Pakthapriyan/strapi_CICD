@@ -1,27 +1,28 @@
 variable "aws_region" {
-  type    = string
-  default = "eu-north-1"
+  type = string
 }
 
-variable "aws_access_key" { type = string }
-variable "aws_secret_key" { type = string }
-
-variable "instance_type" {
-  type    = string
-  default = "t3.micro"
+variable "key_name" {
+  type = string
 }
 
-variable "db_name" {
-  type    = string
-  default = "strapidb"
+variable "image_name" {
+  type = string
 }
 
-variable "db_username" {
+variable "image_tag" {
   type    = string
-  default = "strapi"
+  default = "latest"
 }
 
-variable "db_password" {
-  type      = string
-  sensitive = true
+variable "app_keys" {
+  type = string
+}
+
+variable "api_token_salt" {
+  type = string
+}
+
+variable "admin_jwt_secret" {
+  type = string
 }

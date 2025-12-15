@@ -1,31 +1,30 @@
 #!/bin/bash
 set -e
 
-apt-get update -y
-apt-get install -y docker.io awscli
+# -------------------------
+# Install Docker ONLY if not present
+# -------------------------
+if ! command -v docker &> /dev/null; then
+  amazon-linux-extras install docker -y
+  systemctl enable docker
+  systemctl start docker
+fi
 
-systemctl start docker
-systemctl enable docker
+# -------------------------
+# Run Strapi
+# -------------------------
+docker rm -f strapi || true
 
-# Login to ECR using access key
-aws configure set aws_access_key_id ${aws_key}
-aws configure set aws_secret_access_key ${aws_secret}
-aws configure set default.region ${region}
+docker pull ${image_name}:${image_tag}
 
-aws ecr get-login-password --region ${region} \
-  | docker login --username AWS --password-stdin ${ecr_repo}
-
-# Pull image
-docker pull ${ecr_repo}:${tag}
-
-# Run Strapi PostgreSQL (external RDS)
-docker run -d --name strapi-app \
-  -p 80:1337 \
-  -e DATABASE_CLIENT=postgres \
-  -e DATABASE_HOST=${db_host} \
-  -e DATABASE_PORT=5432 \
-  -e DATABASE_NAME=${db_name} \
-  -e DATABASE_USERNAME=${db_user} \
-  -e DATABASE_PASSWORD=${db_pass} \
+docker run -d \
+  --name strapi \
+  -p 1337:1337 \
+  -e HOST=0.0.0.0 \
+  -e PORT=1337 \
   -e NODE_ENV=production \
-  ${ecr_repo}:${tag}
+  -e APP_KEYS=${app_keys} \
+  -e API_TOKEN_SALT=${api_token_salt} \
+  -e ADMIN_JWT_SECRET=${admin_jwt_secret} \
+  --restart unless-stopped \
+  ${image_name}:${image_tag}

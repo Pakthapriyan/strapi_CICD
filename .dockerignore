@@ -1,0 +1,50 @@
+# Node
+node_modules
+npm-debug.log
+yarn-error.log
+.pnp.*
+.pnpm-store
+
+# Git + VCS
+.git
+.gitignore
+
+# Terraform + local state
+.terraform
+terraform.tfstate*
+terraform.tfvars
+*.tfstate
+
+# Editor / OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Build / caches / large artifacts
+dist
+build
+.cache
+.next
+.out
+coverage
+coverage/
+*.log
+
+# Docker / local output
+docker-compose.override.yml
+docker-compose.prod.yml
+
+# Secrets / env
+.env
+.env.*.local
+.env.local
+.env.production
+.env.*.backup
+
+# Any other large folders you don't want in image
+tests
+docs
+tmp
+uploads
+public/uploads

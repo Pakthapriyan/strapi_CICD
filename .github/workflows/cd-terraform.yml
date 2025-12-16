@@ -29,6 +29,7 @@ jobs:
         working-directory: terraform
         run: |
           terraform apply -auto-approve \
+            -var="key_name=${{ secrets.EC2_KEY_NAME }}" \
             -var="image_name=paktha/strapi-app" \
             -var="image_tag=${{ github.event.inputs.image_tag }}" \
             -var="app_keys=${{ secrets.APP_KEYS }}" \
@@ -38,4 +39,5 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: eu-north-1
+
 

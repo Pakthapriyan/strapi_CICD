@@ -6,6 +6,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.0"
+    }
   }
 }
 
@@ -13,11 +17,15 @@ provider "aws" {
   region = var.aws_region
 }
 
+resource "random_id" "suffix" {
+  byte_length = 2
+}
+
 # -------------------------
 # SECURITY GROUP
 # -------------------------
 resource "aws_security_group" "strapi_sg" {
-  name        = "paktha-strapi-sg"
+  name        = "paktha-strapi-sg-${random_id.suffix.hex}"
   description = "Allow SSH and Strapi"
 
   ingress {
@@ -43,7 +51,7 @@ resource "aws_security_group" "strapi_sg" {
 }
 
 # -------------------------
-# AMI (FAST & STABLE)
+# AMI
 # -------------------------
 data "aws_ami" "amazon_linux" {
   most_recent = true
@@ -66,10 +74,9 @@ resource "aws_instance" "strapi" {
   vpc_security_group_ids = [aws_security_group.strapi_sg.id]
 
   root_block_device {
-    volume_size = 20
+    volume_size = 30
   }
 
-  # IMPORTANT OPTIMIZATION
   user_data_replace_on_change = false
 
   user_data = templatefile("${path.module}/user_data.tpl", {
@@ -81,6 +88,6 @@ resource "aws_instance" "strapi" {
   })
 
   tags = {
-    Name = "paktha-strapi"
+    Name = "paktha-strapi-task6"
   }
 }

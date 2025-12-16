@@ -29,14 +29,13 @@ jobs:
 
       - name: Build Docker image
         run: |
-          set -e
           docker build \
-            -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }} \
-            -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest \
+            -t ${{ steps.login-ecr.outputs.registry }}/paktha-my-strapi-repo-1:${{ github.sha }} \
+            -t ${{ steps.login-ecr.outputs.registry }}/paktha-my-strapi-repo-1:latest \
             .
-
+      
       - name: Push Docker image
         run: |
-          set -e
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/paktha-my-strapi-repo-1:${{ github.sha }}
+          docker push ${{ steps.login-ecr.outputs.registry }}/paktha-my-strapi-repo-1:latest
+      

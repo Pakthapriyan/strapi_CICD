@@ -1,30 +1,33 @@
 #!/bin/bash
 set -e
 
-# -------------------------
-# Install Docker ONLY if not present
-# -------------------------
-if ! command -v docker &> /dev/null; then
-  amazon-linux-extras install docker -y
-  systemctl enable docker
-  systemctl start docker
-fi
+yum update -y
+amazon-linux-extras install docker -y
+systemctl enable docker
+systemctl start docker
 
-# -------------------------
-# Run Strapi
-# -------------------------
-docker rm -f strapi || true
+usermod -aG docker ec2-user
+
+mkdir -p /home/ec2-user/strapi
+cd /home/ec2-user/strapi
+
+cat <<EOF > .env
+HOST=0.0.0.0
+PORT=1337
+NODE_ENV=production
+
+APP_KEYS=${app_keys}
+API_TOKEN_SALT=${api_token_salt}
+ADMIN_JWT_SECRET=${admin_jwt_secret}
+EOF
 
 docker pull ${image_name}:${image_tag}
 
+docker rm -f strapi || true
+
 docker run -d \
   --name strapi \
+  --env-file /home/ec2-user/strapi/.env \
   -p 1337:1337 \
-  -e HOST=0.0.0.0 \
-  -e PORT=1337 \
-  -e NODE_ENV=production \
-  -e APP_KEYS=${app_keys} \
-  -e API_TOKEN_SALT=${api_token_salt} \
-  -e ADMIN_JWT_SECRET=${admin_jwt_secret} \
   --restart unless-stopped \
   ${image_name}:${image_tag}

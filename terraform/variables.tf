@@ -1,10 +1,11 @@
 variable "aws_region" {
-  type = string
-  default     = "eu-north-1"
+  type    = string
+  default = "eu-north-1"
 }
 
 variable "key_name" {
-  type = string
+  type    = string
+  default = "paktha-key"
 }
 
 variable "image_name" {
